@@ -113,6 +113,11 @@ class multi2SingleVolumeWidget(ScriptedLoadableModuleWidget):
      mvNode = slicer.util.getNode(inputVolume.GetID())
      mvData = mvNode.GetImageData()
      
+     #get the studyID from the multivolume. 
+     instUids=mvNode.GetAttribute('DICOM.instanceUIDs').split()
+     filename=slicer.dicomDatabase.fileForInstance(instUids[0])
+     studyID = str(slicer.dicomDatabase.fileValue(filename,'0020,0010'))
+     
      extract = vtk.vtkImageExtractComponents()
      extract.SetInputData(mvData)
      extract.SetComponents(0)
@@ -133,7 +138,7 @@ class multi2SingleVolumeWidget(ScriptedLoadableModuleWidget):
      scalarVolumeNode.SetAndObserveImageData(extract.GetOutput())
      displayNode = scalarVolumeNode.GetDisplayNode()
      
-     scalarVolumeNode.SetName('singleVolume')
+     scalarVolumeNode.SetName(studyID + '_singleVolume')
 
 # mvNode = slicer.util.getNode('T2MAP*')
 # mvData = mvNode.GetImageData()
